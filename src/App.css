@@ -1,0 +1,16 @@
+/* Common styles */
+body {
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Light mode styles */
+body.light-mode {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #2e2e2e;
+    color: #ffffff;
+}
