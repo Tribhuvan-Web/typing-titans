@@ -22,14 +22,10 @@ const InputText = ({ textAreaRef, input, handleInputChange, handlePaste }) => {
             if (e.target.selectionStart !== input.length) {
               e.preventDefault();
             }
-            // if (e.key === "Backspace") {
-            //   e.preventDefault();
-            // }
           }}
           placeholder="Start typing...."
         ></textarea>
       </div>
-      ;
     </div>
   );
 };
