@@ -97,7 +97,7 @@ const MainComponents = () => {
   useEffect(() => {
     const fetchStories = async () => {
       try {
-        const response = await fetch("/random.json");
+        const response = await fetch("/data.json");
         const result = await response.json();
         setStories(result.stories);
       } catch (error) {
@@ -133,7 +133,6 @@ const MainComponents = () => {
         timer={timer}
       />
       <StoryComponent randomStory={randomStory} />
-      <hr />
       <div className="mt-3 p-4">
         <InputText
           textAreaRef={textAreaRef}
