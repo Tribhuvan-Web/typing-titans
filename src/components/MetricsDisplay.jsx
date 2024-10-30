@@ -7,7 +7,7 @@ import {
   FaRegEdit,
 } from "react-icons/fa";
 
-const MetricsDisplay = ({ 
+const MetricsDisplay = ({
   cpm,
   wpm,
   average,
@@ -15,7 +15,7 @@ const MetricsDisplay = ({
   correctWordCount,
   timer,
   selectedTime,
-  setSelectedTime,
+  handleSelectChange,
 }) => {
   return (
     <div className="flex flex-wrap justify-around text-white p-6 rounded-lg shadow-md">
@@ -47,25 +47,28 @@ const MetricsDisplay = ({
             name="timer-select"
             id="timer-select"
             value={selectedTime}
-            onChange={(e) => setSelectedTime(e.target.value)}
+            onChange={(e) => handleSelectChange(e)}
             className="bg-slate-600 text-white flex flex-col"
           >
-            <option value={15} className="text-white bg-slate-600">
+            <option value="5" className="text-white bg-slate-600">
+              5
+            </option>
+            <option value="15" className="text-white bg-slate-600">
               15
             </option>
-            <option value={30} className="text-white bg-slate-600">
+            <option value="30" className="text-white bg-slate-600">
               30
             </option>
-            <option value={60} className="text-white bg-slate-600">
+            <option value="60" className="text-white bg-slate-600">
               60
             </option>
-            <option value={90} className="text-white bg-slate-600">
+            <option value="90" className="text-white bg-slate-600">
               90
             </option>
-            <option value={120} className="text-white bg-slate-600">
+            <option value="120" className="text-white bg-slate-600">
               120
             </option>
-            <option value={300} className="text-white bg-slate-600">
+            <option value="300" className="text-white bg-slate-600">
               300
             </option>
           </select>

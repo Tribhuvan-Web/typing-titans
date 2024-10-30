@@ -9,7 +9,7 @@ const InputText = ({ textAreaRef, input, handleInputChange, handlePaste }) => {
           autoComplete="off"
           name=""
           id=""
-          className="bg-black text-white text-3xl min-w-full h-32 rounded-lg p-4"
+          className="bg-black text-white text-xl min-w-full h-10 rounded-lg p-1"
           value={input}
           onChange={handleInputChange}
           onPaste={handlePaste} // Disable paste

@@ -3,6 +3,9 @@ import InputText from "./InputText";
 import MetricsDisplay from "./MetricsDisplay";
 import StoryComponent from "./StoryComponent";
 import ButtonComponent from "./ButtonComponent";
+import TimerComponent from "./TimerComponent";
+import ErrorComponent from "./ErrorComponent";
+import CustomAlert from "./CustomAlert";
 
 const MainComponents = () => {
   const [stories, setStories] = useState([]);
@@ -11,9 +14,13 @@ const MainComponents = () => {
   const [timer, setTimer] = useState(0);
   const [correctWordCount, setCorrectWordCount] = useState(0);
   const [input, setInput] = useState("");
-  const [selectedTime, setSelectedTime] = useState("0"); // default 60 seconds
+  const [selectedTime, setSelectedTime] = useState("15");
+  const [incorrectIndex, setIncorrectIndex] = useState(null);
+  const [incorrectValue, setIncorrectValue] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [isTiming, setIsTiming] = useState(false);
+  const intervalId = useRef(null);
   const textAreaRef = useRef(null);
-  const intervalId = useRef(null); // Use ref to store interval ID
   let startTime;
 
   const focusTextArea = () => {
@@ -27,61 +34,49 @@ const MainComponents = () => {
     alert("No cheating");
   };
 
-  const calculateCPM = () => {
-    return Math.floor((correctCount / timer) * 60);
-  };
-
-  const calculateWPM = () => {
-    return Math.floor((correctWordCount / timer) * 60);
-  };
-
-  const calculateAverage = () => {
-    const cpm = calculateCPM();
-    const wpm = calculateWPM();
-    return (cpm + wpm) / 2;
-  };
-
   const handleInputChange = (event) => {
     const { value } = event.target;
-    let newInput = [...value]; // Copy of the current input
-    const newContent = [...randomStory.content]; // Copy of the story content
-    let count = 0;
+    if (!isTiming) {
+      setIsTiming(true);
+      startTimer();
+    }
+    let correctChars = 0;
+    let errorIndex = null;
+    let errorVal = null;
     let wordCount = 0;
-    let correct = true; // Flag to stop further iterations if wrong key is pressed
-
-    if (randomStory) {
-      for (let i = 0; i < newInput.length; i++) {
-        if (!correct) {
-          newInput[i] = ""; // Clear the wrong character input
-          continue;
+    for (let i = 0; i < value.length; i++) {
+      if (value[i] === randomStory?.content[i]) {
+        correctChars++;
+        if (value[i] === " ") {
+          wordCount++;
         }
-        if (newInput[i] === newContent[i]) {
-          count++;
-          if (newInput[i] === " ") {
-            wordCount++;
-          }
-        } else {
-          correct = false; // Stop further correct counting
-          break;
-        }
+      } else {
+        errorVal = randomStory?.content[i];
+        errorIndex = i;
+        break;
       }
     }
-
-    setInput(newInput.join("")); // Update the state with the new input
-    setCorrectCount(count);
+    setInput(value);
+    setCorrectCount(correctChars);
     setCorrectWordCount(wordCount);
+    setIncorrectValue(errorVal);
+    setIncorrectIndex(errorIndex);
+    if (correctChars === randomStory?.content.length) {
+      clearInterval(intervalId.current);
+      setIsTiming(false);
+    }
   };
 
   const startTimer = () => {
-    clearInterval(intervalId.current); // Clear previous interval if exists
-    setTimer(0); // Reset timer to 0
+    clearInterval(intervalId.current);
+    setTimer(0);
     startTime = new Date();
     intervalId.current = setInterval(() => {
       const elapsedTime = getTimerTime();
       setTimer(elapsedTime);
-      // Check if the elapsed time matches the selected time
       if (elapsedTime >= selectedTime) {
         clearInterval(intervalId.current);
+        setShowAlert(true);
       }
     }, 1000);
   };
@@ -94,6 +89,28 @@ const MainComponents = () => {
     setSelectedTime(event.target.value);
   };
 
+  const handleTimeUp = () => {
+    setIsTiming(false);
+  };
+
+  const calculateCPM = () => {
+    const minutes = timer / 60;
+    if (minutes > 0) {
+      return Math.floor(correctCount / minutes);
+    } else {
+      return 0;
+    }
+  };
+
+  const calculateWPM = () => {
+    const minutes = timer / 60;
+    if (minutes > 0) {
+      return Math.floor(correctWordCount / minutes);
+    } else {
+      return 0;
+    }
+  };
+
   useEffect(() => {
     const fetchStories = async () => {
       try {
@@ -104,9 +121,7 @@ const MainComponents = () => {
         console.error("Error fetching data", error);
       }
     };
-
     fetchStories();
-
     return () => {
       clearInterval(intervalId.current); // Cleanup interval on unmount
     };
@@ -123,12 +138,27 @@ const MainComponents = () => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
+  const calculateAverage = () => {
+    const cpm = calculateCPM();
+    const wpm = calculateWPM();
+    return (cpm + wpm) / 2;
+  };
+
   return (
     <>
+      {showAlert && (
+        <CustomAlert
+          cpm={calculateCPM()}
+          wpm={calculateWPM()}
+          average={calculateAverage()}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
+      <TimerComponent selectedTime={selectedTime} onTimeUp={handleTimeUp} />
       <MetricsDisplay
-        cpm={!calculateCPM() ? 0 : calculateCPM()}
-        wpm={!calculateWPM() ? 0 : calculateWPM()}
-        average={!calculateAverage() ? 0 : calculateAverage()}
+        cpm={calculateCPM()}
+        wpm={calculateWPM()}
+        average={calculateAverage()}
         correctCount={correctCount}
         correctWordCount={correctWordCount}
         timer={timer}
@@ -136,6 +166,11 @@ const MainComponents = () => {
         handleSelectChange={handleSelectChange}
       />
       <StoryComponent randomStory={randomStory} />
+      <ErrorComponent
+        inputText={input}
+        incorrectIndex={incorrectIndex}
+        incorrectValue={incorrectValue}
+      />
       <div className="mt-3 p-4">
         <InputText
           textAreaRef={textAreaRef}
