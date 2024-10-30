@@ -1,5 +1,4 @@
 import React from "react";
-import FooterComponent from "./FooterComponent";
 
 const InputText = ({ textAreaRef, input, handleInputChange, handlePaste }) => {
   return (

@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       height: {
-        "40vh": "40vh",
+        "35vh": "35vh",
       },
     },
   },
