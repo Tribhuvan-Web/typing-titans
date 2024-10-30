@@ -3,6 +3,7 @@ import { MdOutlineKeyboardOptionKey } from "react-icons/md";
 import ".././App.css";
 import { FaToggleOff } from "react-icons/fa";
 import { IoToggleSharp } from "react-icons/io5";
+import { BsToggle2Off, BsToggle2On } from "react-icons/bs";
 
 const NavbarComponents = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -22,8 +23,8 @@ const NavbarComponents = () => {
   };
 
   return (
-    <div>
-      <nav className="border-gray-200 bg-gray-500  dark:border-gray-300">
+    <div className="">
+      <nav className="border-gray-200 bg-gray-500  dark:border-gray-300 mySticky">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <a
             href="/"
@@ -38,14 +39,12 @@ const NavbarComponents = () => {
             {!darkMode ? (
               <div className="flex items-center">
                 {" "}
-                <h3 className="text-3xl mr-2">Dark mode</h3>{" "}
-                <FaToggleOff className="w-8 h-8" />{" "}
+                <BsToggle2Off className="w-8 h-8" />{" "}
               </div>
             ) : (
               <div className="flex items-center">
                 {" "}
-                <h3 className="text-3xl mr-2">White mode</h3>{" "}
-                <IoToggleSharp className="w-8 h-8" />
+                <BsToggle2On className="w-8 h-8" />
               </div>
             )}
           </div>

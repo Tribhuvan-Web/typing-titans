@@ -1,43 +1,75 @@
 import React from "react";
+import {
+  FaTachometerAlt,
+  FaKeyboard,
+  FaClock,
+  FaCheckCircle,
+  FaRegEdit,
+} from "react-icons/fa";
 
-const MetricsDisplay = ({
+const MetricsDisplay = ({ 
   cpm,
   wpm,
   average,
   correctCount,
   correctWordCount,
   timer,
+  selectedTime,
+  setSelectedTime,
 }) => {
   return (
-    <div className="flex justify-between mt-4 p-4 mb-2">
-      <div className="firstComponent">
-        <button className="bg-green-300 text-black p-6 text-2xl mb-4 rounded-lg">
-          {cpm} / cpm
-        </button>
+    <div className="flex flex-wrap justify-around text-white p-6 rounded-lg shadow-md">
+      <div className="flex flex-col items-center bg-slate-600 p-2 rounded-lg shadow-md w-40">
+        <FaTachometerAlt className="text-lg" />
+        <p className="text-lg">{cpm} CPM</p>
       </div>
-      <div className="firstComponent">
-        <button className="bg-green-300 text-black p-6 text-2xl mb-4 rounded-lg">
-          {wpm} / wpm
-        </button>
+      <div className="flex flex-col items-center bg-slate-600 p-2 rounded-lg shadow-md w-40">
+        <FaKeyboard className="text-lg" />
+        <p className="text-lg">{wpm} WPM</p>
       </div>
-      <div className="firstComponent">
-        <button className="bg-green-300 text-black p-6 text-2xl mb-4 rounded-lg">
-          Average {average}
-        </button>
+      <div className="flex flex-col items-center bg-slate-600 p-2 rounded-lg shadow-md w-40">
+        <FaRegEdit className="text-lg" />
+        <p className="text-lg">Average: {average}</p>
       </div>
-      <div className="firstComponent">
-        <button className="bg-green-300 text-black p-6 text-2xl mb-4 rounded-lg">
-          Correct characters :{correctCount}
-        </button>
+      <div className="flex flex-col items-center bg-slate-600 p-2 rounded-lg shadow-md w-40">
+        <FaCheckCircle className="text-lg" />
+        <p className="text-lg">Correct Chars: {correctCount}</p>
       </div>
-      <div className="firstComponent">
-        <button className="bg-green-300 text-black p-6 text-2xl mb-4 rounded-lg">
-          Correct Word :{correctWordCount}
-        </button>
+      <div className="flex flex-col items-center bg-slate-600 p-2 rounded-lg shadow-md w-40">
+        <FaCheckCircle className="text-lg" />
+        <p className="text-lg">Correct Words: {correctWordCount}</p>
       </div>
-      <div className="firstComponent bg-green-300 text-2xl rounded-lg flex justify-center items-center p-8 h-8">
-        <span className="text-black mb-4">Time &nbsp;: &nbsp;</span>
-        <span className="text-black mb-4">{timer}</span>
+      <div className="flex justify-evenly items-center bg-slate-600 p-2 rounded-lg shadow-md w-40">
+        <FaClock className="text-lg" />
+        <p className="text-lg">{timer} &nbsp; /</p>
+        <div className="flex fle">
+          <select
+            name="timer-select"
+            id="timer-select"
+            value={selectedTime}
+            onChange={(e) => setSelectedTime(e.target.value)}
+            className="bg-slate-600 text-white flex flex-col"
+          >
+            <option value={15} className="text-white bg-slate-600">
+              15
+            </option>
+            <option value={30} className="text-white bg-slate-600">
+              30
+            </option>
+            <option value={60} className="text-white bg-slate-600">
+              60
+            </option>
+            <option value={90} className="text-white bg-slate-600">
+              90
+            </option>
+            <option value={120} className="text-white bg-slate-600">
+              120
+            </option>
+            <option value={300} className="text-white bg-slate-600">
+              300
+            </option>
+          </select>
+        </div>
       </div>
     </div>
   );

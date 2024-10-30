@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import InputText from "./InputText";
-import DataComponent from "./MetricsDisplay";
+import MetricsDisplay from "./MetricsDisplay";
 import StoryComponent from "./StoryComponent";
 import ButtonComponent from "./ButtonComponent";
 
@@ -11,28 +11,10 @@ const MainComponents = () => {
   const [timer, setTimer] = useState(0);
   const [correctWordCount, setCorrectWordCount] = useState(0);
   const [input, setInput] = useState("");
-
+  const [selectedTime, setSelectedTime] = useState("0"); // default 60 seconds
   const textAreaRef = useRef(null);
-  const [accuracy, setAccuracy] = useState(0);
-
+  const intervalId = useRef(null); // Use ref to store interval ID
   let startTime;
-  let intervalId; // To store the interval ID
-  let count = 0;
-  let wordCount = 0;
-
-  function startTimer() {
-    if (count > 0) {
-      startTime = new Date();
-      intervalId = setInterval(() => {
-        setTimer(getTimerTime());
-      }, 1000);
-    } else {
-      startTime = new Date();
-      intervalId = setInterval(() => {
-        setTimer(getTimerTime());
-      }, 1000);
-    }
-  }
 
   const focusTextArea = () => {
     if (textAreaRef.current) {
@@ -54,14 +36,15 @@ const MainComponents = () => {
   };
 
   const calculateAverage = () => {
-    return 1;
+    const cpm = calculateCPM();
+    const wpm = calculateWPM();
+    return (cpm + wpm) / 2;
   };
 
   const handleInputChange = (event) => {
     const { value } = event.target;
     let newInput = [...value]; // Copy of the current input
     const newContent = [...randomStory.content]; // Copy of the story content
-
     let count = 0;
     let wordCount = 0;
     let correct = true; // Flag to stop further iterations if wrong key is pressed
@@ -72,7 +55,6 @@ const MainComponents = () => {
           newInput[i] = ""; // Clear the wrong character input
           continue;
         }
-
         if (newInput[i] === newContent[i]) {
           count++;
           if (newInput[i] === " ") {
@@ -90,9 +72,27 @@ const MainComponents = () => {
     setCorrectWordCount(wordCount);
   };
 
-  function getTimerTime() {
+  const startTimer = () => {
+    clearInterval(intervalId.current); // Clear previous interval if exists
+    setTimer(0); // Reset timer to 0
+    startTime = new Date();
+    intervalId.current = setInterval(() => {
+      const elapsedTime = getTimerTime();
+      setTimer(elapsedTime);
+      // Check if the elapsed time matches the selected time
+      if (elapsedTime >= selectedTime) {
+        clearInterval(intervalId.current);
+      }
+    }, 1000);
+  };
+
+  const getTimerTime = () => {
     return Math.floor((new Date() - startTime) / 1000);
-  }
+  };
+
+  const handleSelectChange = (event) => {
+    setSelectedTime(event.target.value);
+  };
 
   useEffect(() => {
     const fetchStories = async () => {
@@ -101,13 +101,14 @@ const MainComponents = () => {
         const result = await response.json();
         setStories(result.stories);
       } catch (error) {
-        console.error("Error fetch data", error);
+        console.error("Error fetching data", error);
       }
     };
 
     fetchStories();
+
     return () => {
-      clearInterval(intervalId); // Cleanup interval on unmount
+      clearInterval(intervalId.current); // Cleanup interval on unmount
     };
   }, []);
 
@@ -118,19 +119,21 @@ const MainComponents = () => {
     }
   };
 
-  function getRandomInt(min, max) {
+  const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+  };
 
   return (
     <>
-      <DataComponent
+      <MetricsDisplay
         cpm={!calculateCPM() ? 0 : calculateCPM()}
         wpm={!calculateWPM() ? 0 : calculateWPM()}
         average={!calculateAverage() ? 0 : calculateAverage()}
         correctCount={correctCount}
         correctWordCount={correctWordCount}
         timer={timer}
+        selectedTime={selectedTime}
+        handleSelectChange={handleSelectChange}
       />
       <StoryComponent randomStory={randomStory} />
       <div className="mt-3 p-4">
