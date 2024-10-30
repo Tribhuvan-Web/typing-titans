@@ -3,7 +3,6 @@ import InputText from "./InputText";
 import MetricsDisplay from "./MetricsDisplay";
 import StoryComponent from "./StoryComponent";
 import ButtonComponent from "./ButtonComponent";
-import TimerComponent from "./TimerComponent";
 import ErrorComponent from "./ErrorComponent";
 import CustomAlert from "./CustomAlert";
 
@@ -19,6 +18,7 @@ const MainComponents = () => {
   const [incorrectValue, setIncorrectValue] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [isTiming, setIsTiming] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
   const intervalId = useRef(null);
   const textAreaRef = useRef(null);
   let startTime;
@@ -76,7 +76,11 @@ const MainComponents = () => {
       setTimer(elapsedTime);
       if (elapsedTime >= selectedTime) {
         clearInterval(intervalId.current);
+        setIsTiming(false);
+        setButtonDisabled(false);
         setShowAlert(true);
+      } else {
+        setButtonDisabled(true);
       }
     }, 1000);
   };
@@ -154,7 +158,6 @@ const MainComponents = () => {
           onClose={() => setShowAlert(false)}
         />
       )}
-      <TimerComponent selectedTime={selectedTime} onTimeUp={handleTimeUp} />
       <MetricsDisplay
         cpm={calculateCPM()}
         wpm={calculateWPM()}
@@ -183,6 +186,7 @@ const MainComponents = () => {
         getRandomStory={getRandomStory}
         startTimer={startTimer}
         focusTextArea={focusTextArea}
+        disabled={buttonDisabled}
       />
     </>
   );

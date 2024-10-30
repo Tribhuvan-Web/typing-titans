@@ -50,9 +50,6 @@ const MetricsDisplay = ({
             onChange={(e) => handleSelectChange(e)}
             className="bg-slate-600 text-white flex flex-col"
           >
-            <option value="5" className="text-white bg-slate-600">
-              5
-            </option>
             <option value="15" className="text-white bg-slate-600">
               15
             </option>
