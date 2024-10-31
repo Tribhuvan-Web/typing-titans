@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import FooterComponent from "./components/FooterComponent";
+import FooterComponent from "./components/UnfunctionalComponent/FooterComponent";
+import NavbarComponents from "./components/UnfunctionalComponent/NavbarComponents";
 import MainComponents from "./components/MainComponents";
-import NavbarComponents from "./components/NavbarComponents";
 
 function App() {
   const [isMobile, setIsMobile] = useState(false);

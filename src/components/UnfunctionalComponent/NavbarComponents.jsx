@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MdOutlineKeyboardOptionKey } from "react-icons/md";
-import ".././App.css";
+import "../.././App.css";
 import { BsToggle2Off, BsToggle2On } from "react-icons/bs";
 
 const NavbarComponents = () => {

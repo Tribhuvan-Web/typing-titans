@@ -1,24 +1,21 @@
 import React from "react";
 
-const ButtonComponent = ({
-  getRandomStory,
-  startTimer,
-  focusTextArea,
-  disabled,
-}) => {
+const ButtonComponent = ({ getRandomStory, focusTextArea, disabled }) => {
   return (
     <>
       <div className="flex justify-center items-center mt-3 rounded-lg">
         <button
           onClick={() => {
-            getRandomStory();
-            startTimer();
-            focusTextArea();
+            if (!disabled || disabled) {
+              getRandomStory();
+              focusTextArea();
+            }
           }}
-          disabled={disabled}
-          className="text-2xl bg-blue-600 p-2 text-white rounded-lg"
+          className={`text-2xl p-2 text-white rounded-lg ${
+            disabled ? "bg-green-600" : "bg-blue-600"
+          }`}
         >
-          Start
+          {disabled ? "Restart" : "Start"}
         </button>
       </div>
     </>

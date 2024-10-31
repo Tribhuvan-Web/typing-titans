@@ -1,16 +1,7 @@
 import React from "react";
-import {
-  FaTachometerAlt,
-  FaKeyboard,
-  FaClock,
-  FaCheckCircle,
-  FaRegEdit,
-} from "react-icons/fa";
+import { FaClock } from "react-icons/fa";
 
 const MetricsDisplay = ({
-  cpm,
-  wpm,
-  average,
   correctCount,
   correctWordCount,
   timer,
@@ -18,25 +9,11 @@ const MetricsDisplay = ({
   handleSelectChange,
 }) => {
   return (
-    <div className="flex flex-wrap justify-around text-white p-6 rounded-lg shadow-md">
+    <div className="flex flex-wrap justify-end space-x-1 text-white p-6 rounded-lg shadow-md">
       <div className="flex flex-col items-center bg-slate-600 p-2 rounded-lg shadow-md w-40">
-        <FaTachometerAlt className="text-lg" />
-        <p className="text-lg">{cpm} CPM</p>
-      </div>
-      <div className="flex flex-col items-center bg-slate-600 p-2 rounded-lg shadow-md w-40">
-        <FaKeyboard className="text-lg" />
-        <p className="text-lg">{wpm} WPM</p>
-      </div>
-      <div className="flex flex-col items-center bg-slate-600 p-2 rounded-lg shadow-md w-40">
-        <FaRegEdit className="text-lg" />
-        <p className="text-lg">Average: {average}</p>
-      </div>
-      <div className="flex flex-col items-center bg-slate-600 p-2 rounded-lg shadow-md w-40">
-        <FaCheckCircle className="text-lg" />
         <p className="text-lg">Correct Chars: {correctCount}</p>
       </div>
       <div className="flex flex-col items-center bg-slate-600 p-2 rounded-lg shadow-md w-40">
-        <FaCheckCircle className="text-lg" />
         <p className="text-lg">Correct Words: {correctWordCount}</p>
       </div>
       <div className="flex justify-evenly items-center bg-slate-600 p-2 rounded-lg shadow-md w-40">

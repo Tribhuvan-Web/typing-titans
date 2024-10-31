@@ -1,14 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import InputText from "./InputText";
 import MetricsDisplay from "./MetricsDisplay";
-import StoryComponent from "./StoryComponent";
+import StoryComponent from "./UnfunctionalComponent/StoryComponent";
 import ButtonComponent from "./ButtonComponent";
 import ErrorComponent from "./ErrorComponent";
 import CustomAlert from "./CustomAlert";
 
 const MainComponents = () => {
-  const [stories, setStories] = useState([]);
-  const [randomStory, setRandomStory] = useState(null);
   const [correctCount, setCorrectCount] = useState(0);
   const [timer, setTimer] = useState(0);
   const [correctWordCount, setCorrectWordCount] = useState(0);
@@ -18,40 +16,36 @@ const MainComponents = () => {
   const [incorrectValue, setIncorrectValue] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [isTiming, setIsTiming] = useState(false);
+  const [stories, setStories] = useState([]);
+  const [randomStory, setRandomStory] = useState(null);
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [finalCPM, setFinalCPM] = useState(0);
+  const [finalWPM, setFinalWPM] = useState(0);
+  const [finalAvg, setFinalAvg] = useState(0);
   const intervalId = useRef(null);
   const textAreaRef = useRef(null);
   let startTime;
 
-  const focusTextArea = () => {
-    if (textAreaRef.current) {
-      textAreaRef.current.focus();
-    }
-  };
-
-  const handlePaste = (event) => {
-    event.preventDefault();
-    alert("No cheating");
-  };
-
   const handleInputChange = (event) => {
     const { value } = event.target;
-    if (!isTiming) {
-      setIsTiming(true);
-      startTimer();
-    }
     let correctChars = 0;
     let errorIndex = null;
     let errorVal = null;
     let wordCount = 0;
+
+    if (!isTiming) {
+      setIsTiming(true);
+      startTimer();
+    }
+
     for (let i = 0; i < value.length; i++) {
-      if (value[i] === randomStory?.content[i]) {
+      if (value[i] === randomStory.content[i]) {
         correctChars++;
         if (value[i] === " ") {
           wordCount++;
         }
       } else {
-        errorVal = randomStory?.content[i];
+        errorVal = randomStory.current.content[i];
         errorIndex = i;
         break;
       }
@@ -61,26 +55,39 @@ const MainComponents = () => {
     setCorrectWordCount(wordCount);
     setIncorrectValue(errorVal);
     setIncorrectIndex(errorIndex);
-    if (correctChars === randomStory?.content.length) {
-      clearInterval(intervalId.current);
-      setIsTiming(false);
-    }
+  };
+
+  const getRandomInt = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+  const calculateAverage = () => {
+    const cpm = calculateCPM();
+    const wpm = calculateWPM();
+    return (cpm + wpm) / 2;
   };
 
   const startTimer = () => {
     clearInterval(intervalId.current);
     setTimer(0);
+    setButtonDisabled(true);
     startTime = new Date();
     intervalId.current = setInterval(() => {
       const elapsedTime = getTimerTime();
       setTimer(elapsedTime);
-      if (elapsedTime >= selectedTime) {
+      if (elapsedTime == selectedTime) {
         clearInterval(intervalId.current);
         setIsTiming(false);
         setButtonDisabled(false);
+
+        const cpm = calculateCPM();
+        const wpm = calculateWPM();
+        const avg = calculateAverage();
+
+        setFinalCPM(cpm);
+        setFinalWPM(wpm);
+        setFinalAvg(avg);
         setShowAlert(true);
-      } else {
-        setButtonDisabled(true);
       }
     }, 1000);
   };
@@ -93,26 +100,37 @@ const MainComponents = () => {
     setSelectedTime(event.target.value);
   };
 
-  const handleTimeUp = () => {
-    setIsTiming(false);
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+    setTimer(0);
+    setCorrectCount(0);
+    setCorrectWordCount(0);
+    setInput(""); // Clear the input text when closing the alert
+  };
+
+  const focusTextArea = () => {
+    if (textAreaRef.current) {
+      textAreaRef.current.focus();
+    }
+  };
+
+  const handlePaste = (event) => {
+    event.preventDefault();
+    alert("No cheating");
   };
 
   const calculateCPM = () => {
-    const minutes = timer / 60;
-    if (minutes > 0) {
-      return Math.floor(correctCount / minutes);
-    } else {
-      return 0;
+    if (timer > 0) {
+      return Math.floor((correctCount / timer) * 60);
     }
+    return 0;
   };
 
   const calculateWPM = () => {
-    const minutes = timer / 60;
-    if (minutes > 0) {
-      return Math.floor(correctWordCount / minutes);
-    } else {
-      return 0;
+    if (timer > 0) {
+      return Math.floor((correctWordCount / timer) * 60);
     }
+    return 0;
   };
 
   useEffect(() => {
@@ -138,30 +156,17 @@ const MainComponents = () => {
     }
   };
 
-  const getRandomInt = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
-  const calculateAverage = () => {
-    const cpm = calculateCPM();
-    const wpm = calculateWPM();
-    return (cpm + wpm) / 2;
-  };
-
   return (
     <>
       {showAlert && (
         <CustomAlert
-          cpm={calculateCPM()}
-          wpm={calculateWPM()}
-          average={calculateAverage()}
-          onClose={() => setShowAlert(false)}
+          cpm={finalCPM}
+          wpm={finalWPM}
+          average={finalAvg}
+          onClose={handleCloseAlert}
         />
       )}
       <MetricsDisplay
-        cpm={calculateCPM()}
-        wpm={calculateWPM()}
-        average={calculateAverage()}
         correctCount={correctCount}
         correctWordCount={correctWordCount}
         timer={timer}
